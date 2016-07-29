@@ -115,7 +115,7 @@ class HttpHeaderHandler
         if (substr($authorization, 0, 4) != "OTS ") {
             throw new OTSClientException("Invalid Authorization in response. Authorization: " . $authorization);
         }
-        $splits = split(":", substr($authorization, 4));
+        $splits = explode(":", substr($authorization, 4));
         if (count($splits) != 2) {
             throw new OTSClientException("Invalid Authorization in response.");
         }
