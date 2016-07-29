@@ -104,6 +104,8 @@ class OTSHandlers
             }
         }
 
+        gc_collect_cycles();
+
         return $context->response;
     }
 }
