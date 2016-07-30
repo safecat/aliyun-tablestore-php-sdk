@@ -2,6 +2,7 @@
 namespace Aliyun\OTS\Handlers;
 
 use Aliyun\OTS;
+use com\aliyun\cloudservice\ots2\Error;
 
 class ErrorHandler
 {
@@ -25,7 +26,7 @@ class ErrorHandler
             return;
         }
 
-        $error = new \Error();
+        $error = new Error();
         $errorCode = null;
         $errorMessage = null;
 

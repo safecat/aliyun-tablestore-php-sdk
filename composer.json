@@ -16,7 +16,8 @@
     
     "require": {
         "php": ">=5.3",
-        "guzzlehttp/guzzle": "3.8.1|~6.0.1|~6.1"
+        "guzzlehttp/guzzle": "3.8.1|~6.0.1|~6.1",
+        "DrSlump/Protobuf-PHP": "dev-master"
     },
 
     "require-dev": {
@@ -30,7 +31,6 @@
             "Aliyun\\OTS\\Retry\\": "src/OTS/Retry"
         },
         "files": [
-            "src/OTS/ProtoBuffer/pb_message.php",
             "src/OTS/ProtoBuffer/pb_proto_ots.php",
             "src/functions.php"
         ] 
@@ -43,5 +43,11 @@
             "src/OTS/Tests/TestConfig.php",
             "src/OTS/Tests/TestBase.php"
         ]
-    }
+    },
+    "repositories": [
+        {
+            "type":"vcs",
+            "url":"https://github.com/drslump/Protobuf-PHP.git"
+        }
+    ]
 }

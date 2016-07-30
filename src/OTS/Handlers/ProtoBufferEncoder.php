@@ -1,28 +1,7 @@
 <?php
 namespace Aliyun\OTS\Handlers;
 
-use Aliyun\OTS;
-
-use CreateTableRequest;
-use ListTableRequest;
-use DeleteTableRequest;
-use DescribeTableRequest;
-use UpdateTableRequest;
-use GetRowRequest;
-use PutRowRequest;
-use UpdateRowRequest;
-use DeleteRowRequest;
-use BatchGetRowRequest;
-use BatchWriteRowRequest;
-use GetRangeRequest;
-
-use ColumnType, OperationType, Condition, Column, ColumnValue, ColumnUpdate;
-use Direction, ReservedThroughput, CapacityUnit;
-use TableInBatchGetRowRequest, RowInBatchGetRowRequest;
-use TableInBatchWriteRowRequest;
-use PutRowInBatchWriteRowRequest;
-use UpdateRowInBatchWriteRowRequest;
-use DeleteRowInBatchWriteRowRequest;
+use com\aliyun\cloudservice\ots2\ColumnType, com\aliyun\cloudservice\ots2\RowExistenceExpectation, com\aliyun\cloudservice\ots2\OperationType, com\aliyun\cloudservice\ots2\Direction, com\aliyun\cloudservice\ots2\Error, com\aliyun\cloudservice\ots2\ColumnSchema, com\aliyun\cloudservice\ots2\ColumnValue, com\aliyun\cloudservice\ots2\Column, com\aliyun\cloudservice\ots2\Row, com\aliyun\cloudservice\ots2\TableMeta, com\aliyun\cloudservice\ots2\Condition, com\aliyun\cloudservice\ots2\CapacityUnit, com\aliyun\cloudservice\ots2\ReservedThroughputDetails, com\aliyun\cloudservice\ots2\ReservedThroughput, com\aliyun\cloudservice\ots2\ConsumedCapacity, com\aliyun\cloudservice\ots2\CreateTableRequest, com\aliyun\cloudservice\ots2\CreateTableResponse, com\aliyun\cloudservice\ots2\UpdateTableRequest, com\aliyun\cloudservice\ots2\UpdateTableResponse, com\aliyun\cloudservice\ots2\DescribeTableRequest, com\aliyun\cloudservice\ots2\DescribeTableResponse, com\aliyun\cloudservice\ots2\ListTableRequest, com\aliyun\cloudservice\ots2\ListTableResponse, com\aliyun\cloudservice\ots2\DeleteTableRequest, com\aliyun\cloudservice\ots2\DeleteTableResponse, com\aliyun\cloudservice\ots2\GetRowRequest, com\aliyun\cloudservice\ots2\GetRowResponse, com\aliyun\cloudservice\ots2\ColumnUpdate, com\aliyun\cloudservice\ots2\UpdateRowRequest, com\aliyun\cloudservice\ots2\UpdateRowResponse, com\aliyun\cloudservice\ots2\PutRowRequest, com\aliyun\cloudservice\ots2\PutRowResponse, com\aliyun\cloudservice\ots2\DeleteRowRequest, com\aliyun\cloudservice\ots2\DeleteRowResponse, com\aliyun\cloudservice\ots2\RowInBatchGetRowRequest, com\aliyun\cloudservice\ots2\TableInBatchGetRowRequest, com\aliyun\cloudservice\ots2\BatchGetRowRequest, com\aliyun\cloudservice\ots2\RowInBatchGetRowResponse, com\aliyun\cloudservice\ots2\TableInBatchGetRowResponse, com\aliyun\cloudservice\ots2\BatchGetRowResponse, com\aliyun\cloudservice\ots2\PutRowInBatchWriteRowRequest, com\aliyun\cloudservice\ots2\UpdateRowInBatchWriteRowRequest, com\aliyun\cloudservice\ots2\DeleteRowInBatchWriteRowRequest, com\aliyun\cloudservice\ots2\TableInBatchWriteRowRequest, com\aliyun\cloudservice\ots2\BatchWriteRowRequest, com\aliyun\cloudservice\ots2\RowInBatchWriteRowResponse, com\aliyun\cloudservice\ots2\TableInBatchWriteRowResponse, com\aliyun\cloudservice\ots2\BatchWriteRowResponse, com\aliyun\cloudservice\ots2\GetRangeRequest, com\aliyun\cloudservice\ots2\GetRangeResponse;
 
 class ProtoBufferEncoder
 {
@@ -119,11 +98,11 @@ class ProtoBufferEncoder
     {
         switch ($condition) {
             case 'IGNORE':
-                return \RowExistenceExpectation::IGNORE;
+                return RowExistenceExpectation::IGNORE;
             case 'EXPECT_EXIST':
-                return \RowExistenceExpectation::EXPECT_EXIST;
+                return RowExistenceExpectation::EXPECT_EXIST;
             case 'EXPECT_NOT_EXIST':
-                return \RowExistenceExpectation::EXPECT_NOT_EXIST;
+                return RowExistenceExpectation::EXPECT_NOT_EXIST;
             default:
                 throw new \Aliyun\OTS\OTSClientException("Condition must be one of 'IGNORE', 'EXPECT_EXIST' or 'EXPECT_NOT_EXIST'.");
         }
@@ -322,17 +301,17 @@ class ProtoBufferEncoder
     private function encodeDeleteTableRequest($request)
     {
         $pbMessage = new DeleteTableRequest();
-        $pbMessage->set_table_name($request["table_name"]);
+        $pbMessage->table_name = $request["table_name"];
                                           
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
     }
 
     private function encodeDescribeTableRequest($request)
     {
         $pbMessage = new DescribeTableRequest();
-        $pbMessage->set_table_name($request["table_name"]);
+        $pbMessage->table_name = $request["table_name"];
                                           
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
     }
 
     private function encodeUpdateTableRequest($request)
@@ -341,45 +320,45 @@ class ProtoBufferEncoder
         $reservedThroughput = new ReservedThroughput();
         $capacityUnit = new CapacityUnit();
         if(!empty($request['reserved_throughput']['capacity_unit']['read'])){
-            $capacityUnit->set_read($request['reserved_throughput']['capacity_unit']['read']);
+            $capacityUnit->read = $request['reserved_throughput']['capacity_unit']['read'];
         }
         if(!empty($request['reserved_throughput']['capacity_unit']['write'])){
-            $capacityUnit->set_write($request['reserved_throughput']['capacity_unit']['write']);
+            $capacityUnit->write = $request['reserved_throughput']['capacity_unit']['write'];
         }
-        $reservedThroughput->set_capacity_unit($capacityUnit);
+        $reservedThroughput->capacity_unit = $capacityUnit;
                  
-        $pbMessage->set_table_name($request['table_name']);
-        $pbMessage->set_reserved_throughput($reservedThroughput);
+        $pbMessage->table_name = $request['table_name'];
+        $pbMessage->reserved_throughput = $reservedThroughput;
          
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
     }
 
     private function encodeCreateTableRequest($request)
     {
-        $pbMessage = new \CreateTableRequest();
-        $tableMeta = new \TableMeta();
-        $tableName = $tableMeta->set_table_name($request['table_meta']['table_name']);
+        $pbMessage = new CreateTableRequest();
+        $tableMeta = new TableMeta();
+        $tableName = $tableMeta->table_name = $request['table_meta']['table_name'];
         if (!empty($request['table_meta']['primary_key_schema']))
         {
             for ($i=0; $i < count($request['table_meta']['primary_key_schema']); $i++)
             {
-                $columnSchema = new \ColumnSchema();
-                $columnSchema->set_name($request['table_meta']['primary_key_schema'][$i]['name']);
-                $columnSchema->set_type($request['table_meta']['primary_key_schema'][$i]['type']);
-                $tableMeta->set_primary_key($i, $columnSchema);
+                $columnSchema = new ColumnSchema();
+                $columnSchema->name = $request['table_meta']['primary_key_schema'][$i]['name'];
+                $columnSchema->type = $request['table_meta']['primary_key_schema'][$i]['type'];
+                $tableMeta->primary_key[$i] = $columnSchema;
             }
         }
          
-        $reservedThroughput = new \ReservedThroughput();
-        $capacityUnit = new \CapacityUnit();
-        $capacityUnit->set_read($request['reserved_throughput']['capacity_unit']['read']);
-        $capacityUnit->set_write($request['reserved_throughput']['capacity_unit']['write']);
-        $reservedThroughput->set_capacity_unit($capacityUnit);
+        $reservedThroughput = new ReservedThroughput();
+        $capacityUnit = new CapacityUnit();
+        $capacityUnit->read = $request['reserved_throughput']['capacity_unit']['read'];
+        $capacityUnit->write = $request['reserved_throughput']['capacity_unit']['write'];
+        $reservedThroughput->capacity_unit = $capacityUnit;
          
-        $pbMessage->set_table_meta($tableMeta);
-        $pbMessage->set_reserved_throughput($reservedThroughput);
+        $pbMessage->table_meta = $tableMeta;
+        $pbMessage->reserved_throughput = $reservedThroughput;
          
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
     }
 
     private function encodeGetRowRequest($request)
@@ -389,77 +368,77 @@ class ProtoBufferEncoder
         {
             $pkColumn = new Column();
             $columnValue = new ColumnValue();
-            $pkColumn->set_name($request['primary_key'][$i]['name']);
-            $columnValue->set_type($request['primary_key'][$i]['value']['type']);
+            $pkColumn->name = $request['primary_key'][$i]['name'];
+            $columnValue->type = $request['primary_key'][$i]['value']['type'];
             switch ($request['primary_key'][$i]['value']['type'])
             {
                 case ColumnType::INTEGER:
-                    $columnValue->set_v_int($request['primary_key'][$i]['value']['v_int']);
+                    $columnValue->v_int = $request['primary_key'][$i]['value']['v_int'];
                     break;  
                 case ColumnType::STRING:
-                    $columnValue->set_v_string($request['primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['primary_key'][$i]['value']['v_string'];
                     break;
                 case ColumnType::BOOLEAN:
-                    $columnValue->set_v_bool($request['primary_key'][$i]['value']['v_bool']);
+                    $columnValue->v_bool = $request['primary_key'][$i]['value']['v_bool'];
                     break;  
                 case ColumnType::DOUBLE:
-                    $columnValue->set_v_double($request['primary_key'][$i]['value']['v_double']);
+                    $columnValue->v_double = $request['primary_key'][$i]['value']['v_double'];
                     break;
                 case ColumnType::BINARY:
-                    $columnValue->set_v_binary($request['primary_key'][$i]['value']['v_binary']);
+                    $columnValue->v_binary = $request['primary_key'][$i]['value']['v_binary'];
                     break;
                 default:
-                    $columnValue->set_v_string($request['primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['primary_key'][$i]['value']['v_string'];
             }
-            $pkColumn->set_value($columnValue);
-            $pbMessage->set_primary_key($i, $pkColumn);
+            $pkColumn->value = $columnValue;
+            $pbMessage->primary_key[$i] = $pkColumn;
         }
         if (!empty($request['columns_to_get']))
         {
             for ($i = 0; $i < count($request['columns_to_get']); $i++)
             {
-                $pbMessage->set_columns_to_get($i, $request['columns_to_get'][$i]);
+                $pbMessage->columns_to_get[$i] = $request['columns_to_get'][$i];
             }
         }
          
-        $pbMessage->set_table_name($request['table_name']);
-        return $pbMessage->SerializeToString();
+        $pbMessage->table_name = $request['table_name'];
+        return $pbMessage->serialize();
     }
 
     private function encodePutRowRequest($request)
     {
         $pbMessage = new PutRowRequest();
         $condition = new Condition();
-        $condition->set_row_existence($request['condition']['row_existence']);
+        $condition->row_existence = $request['condition']['row_existence'];
          
         for ($i=0; $i < count($request['primary_key']); $i++)
         {
             $pkColumn = new Column();
             $columnValue = new ColumnValue();
-            $pkColumn->set_name($request['primary_key'][$i]['name']);
-            $columnValue->set_type($request['primary_key'][$i]['value']['type']);
+            $pkColumn->name = $request['primary_key'][$i]['name'];
+            $columnValue->type = $request['primary_key'][$i]['value']['type'];
             switch ($request['primary_key'][$i]['value']['type'])
             {
                 case ColumnType::INTEGER:
-                    $columnValue->set_v_int($request['primary_key'][$i]['value']['v_int']);
+                    $columnValue->v_int = $request['primary_key'][$i]['value']['v_int'];
                     break;  
                 case ColumnType::STRING:
-                    $columnValue->set_v_string($request['primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['primary_key'][$i]['value']['v_string'];
                     break;
                 case ColumnType::BOOLEAN:
-                    $columnValue->set_v_bool($request['primary_key'][$i]['value']['v_bool']);
+                    $columnValue->v_bool = $request['primary_key'][$i]['value']['v_bool'];
                     break;  
                 case ColumnType::DOUBLE:
-                    $columnValue->set_v_double($request['primary_key'][$i]['value']['v_double']);
+                    $columnValue->v_double = $request['primary_key'][$i]['value']['v_double'];
                     break;
                 case ColumnType::BINARY:
-                    $columnValue->set_v_binary($request['primary_key'][$i]['value']['v_binary']);
+                    $columnValue->v_binary = $request['primary_key'][$i]['value']['v_binary'];
                     break;
                 default:
-                    $columnValue->set_v_string($request['primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['primary_key'][$i]['value']['v_string'];
             }
-            $pkColumn->set_value($columnValue);
-            $pbMessage->set_primary_key($i, $pkColumn);
+            $pkColumn->value = $columnValue;
+            $pbMessage->primary_key[$i] = $pkColumn;
         }
          
         if (!empty($request['attribute_columns']))
@@ -468,75 +447,75 @@ class ProtoBufferEncoder
             {
                 $attributeColumn = new Column();
                 $columnValue = new ColumnValue();
-                $attributeColumn->set_name($request['attribute_columns'][$i]['name']);
-                $columnValue->set_type($request['attribute_columns'][$i]['value']['type']);
+                $attributeColumn->name = $request['attribute_columns'][$i]['name'];
+                $columnValue->type = $request['attribute_columns'][$i]['value']['type'];
                 switch ($request['attribute_columns'][$i]['value']['type'])
                 {
                     case ColumnType::INTEGER:
-                        $columnValue->set_v_int($request['attribute_columns'][$i]['value']['v_int']);
+                        $columnValue->v_int = $request['attribute_columns'][$i]['value']['v_int'];
                         break;  
                     case ColumnType::STRING:
-                        $columnValue->set_v_string($request['attribute_columns'][$i]['value']['v_string']);
+                        $columnValue->v_string = $request['attribute_columns'][$i]['value']['v_string'];
                         break;
                     case ColumnType::BOOLEAN:
-                        $columnValue->set_v_bool($request['attribute_columns'][$i]['value']['v_bool']);
+                        $columnValue->v_bool = $request['attribute_columns'][$i]['value']['v_bool'];
                         break;  
                     case ColumnType::DOUBLE:
-                        $columnValue->set_v_double($request['attribute_columns'][$i]['value']['v_double']);
+                        $columnValue->v_double = $request['attribute_columns'][$i]['value']['v_double'];
                         break;
                     case ColumnType::BINARY:
-                        $columnValue->set_v_binary($request['attribute_columns'][$i]['value']['v_binary']);
+                        $columnValue->v_binary = $request['attribute_columns'][$i]['value']['v_binary'];
                         break;
                     default:
-                      $columnValue->set_v_string($request['attribute_columns'][$i]['value']['v_string']);
+                      $columnValue->v_string = $request['attribute_columns'][$i]['value']['v_string'];
                 }
-                $attributeColumn->set_value($columnValue);
-                $pbMessage->set_attribute_columns($i, $attributeColumn);
+                $attributeColumn->value = $columnValue;
+                $pbMessage->attribute_columns[$i] = $attributeColumn;
             }
         }
          
-        $pbMessage->set_table_name($request['table_name']);
-        $pbMessage->set_condition($condition);
+        $pbMessage->table_name = $request['table_name'];
+        $pbMessage->condition = $condition;
          
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
     }
 
     private function encodeUpdateRowRequest($request)
     {
         $pbMessage = new UpdateRowRequest();
-        $pbMessage->set_table_name($request["table_name"]);
+        $pbMessage->table_name = $request["table_name"];
         $condition = new Condition();
-        $condition->set_row_existence($request['condition']['row_existence']);
-        $pbMessage->set_condition($condition);
+        $condition->row_existence = $request['condition']['row_existence'];
+        $pbMessage->condition = $condition;
          
         for ($i=0; $i < count($request['primary_key']); $i++)
         {
             $pkColumn = new Column();
             $columnValue = new ColumnValue();
-            $pkColumn->set_name($request['primary_key'][$i]['name']);
-            $columnValue->set_type($request['primary_key'][$i]['value']['type']);
+            $pkColumn->name = $request['primary_key'][$i]['name'];
+            $columnValue->type = $request['primary_key'][$i]['value']['type'];
             switch ($request['primary_key'][$i]['value']['type'])
             {
                 case ColumnType::INTEGER:
-                    $columnValue->set_v_int($request['primary_key'][$i]['value']['v_int']);
+                    $columnValue->v_int = $request['primary_key'][$i]['value']['v_int'];
                     break;  
                 case ColumnType::STRING:
-                    $columnValue->set_v_string($request['primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['primary_key'][$i]['value']['v_string'];
                     break;
                 case ColumnType::BOOLEAN:
-                    $columnValue->set_v_bool($request['primary_key'][$i]['value']['v_bool']);
+                    $columnValue->v_bool = $request['primary_key'][$i]['value']['v_bool'];
                     break;  
                 case ColumnType::DOUBLE:
-                    $columnValue->set_v_double($request['primary_key'][$i]['value']['v_double']);
+                    $columnValue->v_double = $request['primary_key'][$i]['value']['v_double'];
                     break;
                 case ColumnType::BINARY:
-                    $columnValue->set_v_binary($request['primary_key'][$i]['value']['v_binary']);
+                    $columnValue->v_binary = $request['primary_key'][$i]['value']['v_binary'];
                     break;
                 default:
-                    $columnValue->set_v_string($request['primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['primary_key'][$i]['value']['v_string'];
             }
-            $pkColumn->set_value($columnValue);
-            $pbMessage->set_primary_key($i, $pkColumn);
+            $pkColumn->value = $columnValue;
+            $pbMessage->primary_key[$i] = $pkColumn;
         }
          
         if (!empty($request['attribute_columns']))
@@ -545,81 +524,81 @@ class ProtoBufferEncoder
             {
                 $attributeColumn = new ColumnUpdate();
                 $columnValue = new ColumnValue();
-                $attributeColumn->set_name($request['attribute_columns'][$i]['name']);
-                $attributeColumn->set_type($request['attribute_columns'][$i]['type']);
+                $attributeColumn->name = $request['attribute_columns'][$i]['name'];
+                $attributeColumn->type = $request['attribute_columns'][$i]['type'];
                 if ($request['attribute_columns'][$i]['type'] == OperationType::DELETE)
                 {
-                    $pbMessage->set_attribute_columns($i, $attributeColumn);
+                    $pbMessage->attribute_columns[$i] = $attributeColumn;
                     continue;
                 }
                  
-                $columnValue->set_type($request['attribute_columns'][$i]['value']['type']);
+                $columnValue->type = $request['attribute_columns'][$i]['value']['type'];
                 switch ($request['attribute_columns'][$i]['value']['type'])
                 {
                     case ColumnType::INTEGER:
-                        $columnValue->set_v_int($request['attribute_columns'][$i]['value']['v_int']);
+                        $columnValue->v_int = $request['attribute_columns'][$i]['value']['v_int'];
                         break;  
                     case ColumnType::STRING:
-                        $columnValue->set_v_string($request['attribute_columns'][$i]['value']['v_string']);
+                        $columnValue->v_string = $request['attribute_columns'][$i]['value']['v_string'];
                         break;
                     case ColumnType::BOOLEAN:
-                        $columnValue->set_v_bool($request['attribute_columns'][$i]['value']['v_bool']);
+                        $columnValue->v_bool = $request['attribute_columns'][$i]['value']['v_bool'];
                         break;  
                     case ColumnType::DOUBLE:
-                        $columnValue->set_v_double($request['attribute_columns'][$i]['value']['v_double']);
+                        $columnValue->v_double = $request['attribute_columns'][$i]['value']['v_double'];
                         break;
                     case ColumnType::BINARY:
-                        $columnValue->set_v_binary($request['attribute_columns'][$i]['value']['v_binary']);
+                        $columnValue->v_binary = $request['attribute_columns'][$i]['value']['v_binary'];
                         break;
                     default:
-                      $columnValue->set_v_string($request['attribute_columns'][$i]['value']['v_string']);
+                      $columnValue->v_string = $request['attribute_columns'][$i]['value']['v_string'];
                 }
-                $attributeColumn->set_value($columnValue);
-                $pbMessage->set_attribute_columns($i, $attributeColumn);
+                $attributeColumn->value = $columnValue;
+                $pbMessage->attribute_columns[$i] = $attributeColumn;
             }
         }
          
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
     }
 
     private function encodeDeleteRowRequest($request)
     {
         $pbMessage = new DeleteRowRequest();
-        $pbMessage->set_table_name($request["table_name"]);
+        $pbMessage->table_name = $request["table_name"];
         $condition = new Condition();
-        $condition->set_row_existence($request['condition']['row_existence']);
-        $pbMessage->set_condition($condition);
+        $condition->row_existence = $request['condition']['row_existence'];
+        $pbMessage->condition = $condition;
          
         for ($i=0; $i < count($request['primary_key']); $i++)
         {
             $pkColumn = new Column();
             $columnValue = new ColumnValue();
-            $pkColumn->set_name($request['primary_key'][$i]['name']);
-            $columnValue->set_type($request['primary_key'][$i]['value']['type']);
+            $pkColumn->name = $request['primary_key'][$i]['name'];
+            $columnValue->type = $request['primary_key'][$i]['value']['type'];
             switch ($request['primary_key'][$i]['value']['type'])
             {
                 case ColumnType::INTEGER:
-                    $columnValue->set_v_int($request['primary_key'][$i]['value']['v_int']);
+                    $columnValue->v_int = $request['primary_key'][$i]['value']['v_int'];
                     break;  
                 case ColumnType::STRING:
-                    $columnValue->set_v_string($request['primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['primary_key'][$i]['value']['v_string'];
                     break;
                 case ColumnType::BOOLEAN:
-                    $columnValue->set_v_bool($request['primary_key'][$i]['value']['v_bool']);
+                    $columnValue->v_bool = $request['primary_key'][$i]['value']['v_bool'];
                     break;  
                 case ColumnType::DOUBLE:
-                    $columnValue->set_v_double($request['primary_key'][$i]['value']['v_double']);
+                    $columnValue->v_double = $request['primary_key'][$i]['value']['v_double'];
                     break;
                 case ColumnType::BINARY:
-                    $columnValue->set_v_binary($request['primary_key'][$i]['value']['v_binary']);
+                    $columnValue->v_binary = $request['primary_key'][$i]['value']['v_binary'];
                     break;
                 default:
-                    $columnValue->set_v_string($request['primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['primary_key'][$i]['value']['v_string'];
             }
-            $pkColumn->set_value($columnValue);
-            $pbMessage->set_primary_key($i, $pkColumn);
+            $pkColumn->value = $columnValue;
+            $pbMessage->primary_key[$i] = $pkColumn;
         }
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
     }
 
     private function encodeBatchGetRowRequest($request)
@@ -629,50 +608,50 @@ class ProtoBufferEncoder
         if(!empty($request['tables'])){
             for ($m = 0; $m < count($request['tables']); $m++) {
                 $tableInBatchGetRowRequest = new TableInBatchGetRowRequest();
-                $tableInBatchGetRowRequest->set_table_name($request['tables'][$m]['table_name']);
+                $tableInBatchGetRowRequest->table_name = $request['tables'][$m]['table_name'];
                 if(!empty($request['tables'][$m]['rows'])){
                     for ($n = 0; $n < count($request['tables'][$m]['rows']); $n++) {
                         $rowInBatchGetRowRequest = new RowInBatchGetRowRequest();
                         for ($i = 0; $i < count($request['tables'][$m]['rows'][$n]['primary_key']); $i++) {
                             $pkColumn = new Column();
                             $columnValue = new ColumnValue();
-                            $pkColumn->set_name($request['tables'][$m]['rows'][$n]['primary_key'][$i]['name']);
-                            $columnValue->set_type($request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['type']);
+                            $pkColumn->name = $request['tables'][$m]['rows'][$n]['primary_key'][$i]['name'];
+                            $columnValue->type = $request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['type'];
                             switch ($request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['type']) {
                                 case ColumnType::INTEGER:
-                                    $columnValue->set_v_int($request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_int']);
+                                    $columnValue->v_int = $request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_int'];
                                     break;
                                 case ColumnType::STRING:
-                                    $columnValue->set_v_string($request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_string']);
+                                    $columnValue->v_string = $request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_string'];
                                     break;
                                 case ColumnType::BOOLEAN:
-                                    $columnValue->set_v_bool($request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_bool']);
+                                    $columnValue->v_bool = $request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_bool'];
                                     break;
                                 case ColumnType::DOUBLE:
-                                    $columnValue->set_v_double($request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_double']);
+                                    $columnValue->v_double = $request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_double'];
                                     break;
                                 case ColumnType::BINARY:
-                                    $columnValue->set_v_binary($request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_binary']);
+                                    $columnValue->v_binary = $request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_binary'];
                                     break;
                                 default:
-                                    $columnValue->set_v_string($request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_string']);
+                                    $columnValue->v_string = $request['tables'][$m]['rows'][$n]['primary_key'][$i]['value']['v_string'];
                             }
-                            $pkColumn->set_value($columnValue);
-                            $rowInBatchGetRowRequest->set_primary_key($i, $pkColumn);
+                            $pkColumn->value = $columnValue;
+                            $rowInBatchGetRowRequest->primary_key[$i] = $pkColumn;
                         }
-                        $tableInBatchGetRowRequest->set_rows($n, $rowInBatchGetRowRequest);
+                        $tableInBatchGetRowRequest->rows[$n] = $rowInBatchGetRowRequest;
                     }
                 }
  
                 if (!empty($request['tables'][$m]['columns_to_get'])) {
                     for ($c = 0; $c < count($request['tables'][$m]['columns_to_get']); $c++) {
-                        $tableInBatchGetRowRequest->set_columns_to_get($c, $request['tables'][$m]['columns_to_get'][$c]);
+                        $tableInBatchGetRowRequest->columns_to_get[$c] = $request['tables'][$m]['columns_to_get'][$c];
                     }
                 }
-                $pbMessage->set_tables($m, $tableInBatchGetRowRequest);
+                $pbMessage->tables[$m] = $tableInBatchGetRowRequest;
             }
         }
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
     }
 
     private function encodeBatchWriteRowRequest($request)
@@ -682,71 +661,71 @@ class ProtoBufferEncoder
 
         for ($m = 0; $m < count($request['tables']); $m++) {
             $tableInBatchGetWriteRequest = new TableInBatchWriteRowRequest();
-            $tableInBatchGetWriteRequest->set_table_name($request['tables'][$m]['table_name']);
+            $tableInBatchGetWriteRequest->table_name = $request['tables'][$m]['table_name'];
             if (!empty($request['tables'][$m]['put_rows'])) {
                 for ($p = 0; $p < count($request['tables'][$m]['put_rows']); $p++) {
                     $putRowItem = new PutRowInBatchWriteRowRequest();
                     $condition = new Condition();
-                    $condition->set_row_existence($request['tables'][$m]['put_rows'][$p]['condition']['row_existence']);
-                    $putRowItem->set_condition($condition);
+                    $condition->row_existence = $request['tables'][$m]['put_rows'][$p]['condition']['row_existence'];
+                    $putRowItem->condition = $condition;
  
                     for ($n = 0; $n < count($request['tables'][$m]['put_rows'][$p]['primary_key']); $n++) {
                         $pkColumn = new Column();
                         $columnValue = new ColumnValue();
-                        $pkColumn->set_name($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['name']);
-                        $columnValue->set_type($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['type']);
+                        $pkColumn->name = $request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['name'];
+                        $columnValue->type = $request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['type'];
                         switch ($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['type']) {
                             case ColumnType::INTEGER:
-                                $columnValue->set_v_int($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_int']);
+                                $columnValue->v_int = $request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_int'];
                                 break;
                             case ColumnType::STRING:
-                                $columnValue->set_v_string($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_string']);
+                                $columnValue->v_string = $request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_string'];
                                 break;
                             case ColumnType::BOOLEAN:
-                                $columnValue->set_v_bool($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_bool']);
+                                $columnValue->v_bool = $request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_bool'];
                                 break;
                             case ColumnType::DOUBLE:
-                                $columnValue->set_v_double($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_double']);
+                                $columnValue->v_double = $request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_double'];
                                 break;
                             case ColumnType::BINARY:
-                                $columnValue->set_v_binary($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_binary']);
+                                $columnValue->v_binary = $request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_binary'];
                                 break;
                             default:
-                                $columnValue->set_v_string($request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_string']);
+                                $columnValue->v_string = $request['tables'][$m]['put_rows'][$p]['primary_key'][$n]['value']['v_string'];
                         }
-                        $pkColumn->set_value($columnValue);
-                        $putRowItem->set_primary_key($n, $pkColumn);
+                        $pkColumn->value = $columnValue;
+                        $putRowItem->primary_key[$n] = $pkColumn;
                     }
                     if (!empty($request['tables'][$m]['put_rows'][$p]['attribute_columns'])) {
                         for ($c = 0; $c < count($request['tables'][$m]['put_rows'][$p]['attribute_columns']); $c++) {
                             $putRowAttributeColumn = new Column();
                             $putRowColumnValue = new ColumnValue();
-                            $putRowAttributeColumn->set_name($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['name']);
-                            $putRowColumnValue->set_type($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['type']);
+                            $putRowAttributeColumn->name = $request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['name'];
+                            $putRowColumnValue->type = $request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['type'];
                             switch ($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['type']) {
                                 case ColumnType::INTEGER:
-                                    $putRowColumnValue->set_v_int($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_int']);
+                                    $putRowColumnValue->v_int = $request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_int'];
                                     break;
                                 case ColumnType::STRING:
-                                    $putRowColumnValue->set_v_string($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_string']);
+                                    $putRowColumnValue->v_string = $request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_string'];
                                     break;
                                 case ColumnType::BOOLEAN:
-                                    $putRowColumnValue->set_v_bool($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_bool']);
+                                    $putRowColumnValue->v_bool = $request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_bool'];
                                     break;
                                 case ColumnType::DOUBLE:
-                                    $putRowColumnValue->set_v_double($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_double']);
+                                    $putRowColumnValue->v_double = $request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_double'];
                                     break;
                                 case ColumnType::BINARY:
-                                    $putRowColumnValue->set_v_binary($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_binary']);
+                                    $putRowColumnValue->v_binary = $request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_binary'];
                                     break;
                                 default:
-                                    $putRowColumnValue->set_v_string($request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_string']);
+                                    $putRowColumnValue->v_string = $request['tables'][$m]['put_rows'][$p]['attribute_columns'][$c]['value']['v_string'];
                             }
-                            $putRowAttributeColumn->set_value($putRowColumnValue);
-                            $putRowItem->set_attribute_columns($c, $putRowAttributeColumn);
+                            $putRowAttributeColumn->value = $putRowColumnValue;
+                            $putRowItem->attribute_columns[$c] = $putRowAttributeColumn;
                         }
                     }
-                    $tableInBatchGetWriteRequest->set_put_rows($p, $putRowItem);
+                    $tableInBatchGetWriteRequest->put_rows[$p] = $putRowItem;
                 }
             }
  
@@ -754,72 +733,72 @@ class ProtoBufferEncoder
                 for ($j = 0; $j < count($request['tables'][$m]['update_rows']); $j++) {
                     $updateRowItem = new UpdateRowInBatchWriteRowRequest();
                     $condition = new Condition();
-                    $condition->set_row_existence($request['tables'][$m]['update_rows'][$j]['condition']['row_existence']);
-                    $updateRowItem->set_condition($condition);
+                    $condition->row_existence = $request['tables'][$m]['update_rows'][$j]['condition']['row_existence'];
+                    $updateRowItem->condition = $condition;
                     for ($b = 0; $b < count($request['tables'][$m]['update_rows'][$j]['primary_key']); $b++) {
                         $pkColumn = new Column();
                         $updateRowColumnValue = new ColumnValue();
-                        $pkColumn->set_name($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['name']);
-                        $updateRowColumnValue->set_type($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['type']);
+                        $pkColumn->name = $request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['name'];
+                        $updateRowColumnValue->type = $request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['type'];
                         switch ($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['type']) {
                             case ColumnType::INTEGER:
-                                $updateRowColumnValue->set_v_int($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_int']);
+                                $updateRowColumnValue->v_int = $request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_int'];
                                 break;
                             case ColumnType::STRING:
-                                $updateRowColumnValue->set_v_string($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_string']);
+                                $updateRowColumnValue->v_string = $request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_string'];
                                 break;
                             case ColumnType::BOOLEAN:
-                                $updateRowColumnValue->set_v_bool($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_bool']);
+                                $updateRowColumnValue->v_bool = $request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_bool'];
                                 break;
                             case ColumnType::DOUBLE:
-                                $updateRowColumnValue->set_v_double($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_double']);
+                                $updateRowColumnValue->v_double = $request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_double'];
                                 break;
                             case ColumnType::BINARY:
-                                $updateRowColumnValue->set_v_binary($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_binary']);
+                                $updateRowColumnValue->v_binary = $request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_binary'];
                                 break;
                             default:
-                                $updateRowColumnValue->set_v_string($request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_string']);
+                                $updateRowColumnValue->v_string = $request['tables'][$m]['update_rows'][$j]['primary_key'][$b]['value']['v_string'];
                         }
-                        $pkColumn->set_value($updateRowColumnValue);
-                        $updateRowItem->set_primary_key($b, $pkColumn);
+                        $pkColumn->value = $updateRowColumnValue;
+                        $updateRowItem->primary_key[$b] = $pkColumn;
                     }
  
                     if (!empty($request['tables'][$m]['update_rows'][$j]['attribute_columns'])) {
                         for ($i = 0; $i < count($request['tables'][$m]['update_rows'][$j]['attribute_columns']); $i++) {
                             $updateRowAttributeColumn = new ColumnUpdate();
                             $updateRowColumnValue = new ColumnValue();
-                            $updateRowAttributeColumn->set_name($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['name']);
-                            $updateRowAttributeColumn->set_type($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['type']);
+                            $updateRowAttributeColumn->name = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['name'];
+                            $updateRowAttributeColumn->type = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['type'];
                             if ($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['type'] == OperationType::DELETE) {
-                                $updateRowItem->set_attribute_columns($i, $updateRowAttributeColumn);
+                                $updateRowItem->attribute_columns[$i] = $updateRowAttributeColumn;
                                 continue;
                             }
  
-                            $updateRowColumnValue->set_type($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['type']);
+                            $updateRowColumnValue->type = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['type'];
                             switch ($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['type']) {
                                 case ColumnType::INTEGER:
-                                    $updateRowColumnValue->set_v_int($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_int']);
+                                    $updateRowColumnValue->v_int = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_int'];
                                     break;
                                 case ColumnType::STRING:
-                                    $updateRowColumnValue->set_v_string($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_string']);
+                                    $updateRowColumnValue->v_string = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_string'];
                                     break;
                                 case ColumnType::BOOLEAN:
-                                    $updateRowColumnValue->set_v_bool($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_bool']);
+                                    $updateRowColumnValue->v_bool = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_bool'];
                                     break;
                                 case ColumnType::DOUBLE:
-                                    $updateRowColumnValue->set_v_double($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_double']);
+                                    $updateRowColumnValue->v_double = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_double'];
                                     break;
                                 case ColumnType::BINARY:
-                                    $updateRowColumnValue->set_v_binary($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_binary']);
+                                    $updateRowColumnValue->v_binary = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_binary'];
                                     break;
                                 default:
-                                    $updateRowColumnValue->set_v_string($request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_string']);
+                                    $updateRowColumnValue->v_string = $request['tables'][$m]['update_rows'][$j]['attribute_columns'][$i]['value']['v_string'];
                             }
-                            $updateRowAttributeColumn->set_value($updateRowColumnValue);
-                            $updateRowItem->set_attribute_columns($i, $updateRowAttributeColumn);
+                            $updateRowAttributeColumn->value = $updateRowColumnValue;
+                            $updateRowItem->attribute_columns[$i] = $updateRowAttributeColumn;
                         }
                     }
-                    $tableInBatchGetWriteRequest->set_update_rows($j, $updateRowItem);
+                    $tableInBatchGetWriteRequest->update_rows[$j] = $updateRowItem;
                 }
             }
  
@@ -827,42 +806,42 @@ class ProtoBufferEncoder
                 for ($k = 0; $k < count($request['tables'][$m]['delete_rows']); $k++) {
                     $deleteRowItem = new DeleteRowInBatchWriteRowRequest();
                     $condition = new Condition();
-                    $condition->set_row_existence($request['tables'][$m]['delete_rows'][$k]['condition']['row_existence']);
-                    $deleteRowItem->set_condition($condition);
+                    $condition->row_existence = $request['tables'][$m]['delete_rows'][$k]['condition']['row_existence'];
+                    $deleteRowItem->condition = $condition;
                     for ($a = 0; $a < count($request['tables'][$m]['delete_rows'][$k]['primary_key']); $a++) {
                         $pkColumn = new Column();
                         $deleteRowColumnValue = new ColumnValue();
-                        $pkColumn->set_name($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['name']);
-                        $deleteRowColumnValue->set_type($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['type']);
+                        $pkColumn->name = $request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['name'];
+                        $deleteRowColumnValue->type = $request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['type'];
                         switch ($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['type']) {
                             case ColumnType::INTEGER:
-                                $deleteRowColumnValue->set_v_int($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_int']);
+                                $deleteRowColumnValue->v_int = $request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_int'];
                                 break;
                             case ColumnType::STRING:
-                                $deleteRowColumnValue->set_v_string($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_string']);
+                                $deleteRowColumnValue->v_string = $request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_string'];
                                 break;
                             case ColumnType::BOOLEAN:
-                                $deleteRowColumnValue->set_v_bool($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_bool']);
+                                $deleteRowColumnValue->v_bool = $request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_bool'];
                                 break;
                             case ColumnType::DOUBLE:
-                                $deleteRowColumnValue->set_v_double($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_double']);
+                                $deleteRowColumnValue->v_double = $request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_double'];
                                 break;
                             case ColumnType::BINARY:
-                                $deleteRowColumnValue->set_v_binary($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_binary']);
+                                $deleteRowColumnValue->v_binary = $request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_binary'];
                                 break;
                             default:
-                                $deleteRowColumnValue->set_v_string($request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_string']);
+                                $deleteRowColumnValue->v_string = $request['tables'][$m]['delete_rows'][$k]['primary_key'][$a]['value']['v_string'];
                         }
-                        $pkColumn->set_value($deleteRowColumnValue);
-                        $deleteRowItem->set_primary_key($a, $pkColumn);
+                        $pkColumn->value = $deleteRowColumnValue;
+                        $deleteRowItem->primary_key[$a] = $pkColumn;
                     }
-                    $tableInBatchGetWriteRequest->set_delete_rows($k, $deleteRowItem);
+                    $tableInBatchGetWriteRequest->delete_rows[$k] = $deleteRowItem;
                 }
             }
             //整体设置
-            $pbMessage->set_tables($m, $tableInBatchGetWriteRequest);
+            $pbMessage->tables[$m] = $tableInBatchGetWriteRequest;
         }
-        return $pbMessage->SerializeToString();
+        return $pbMessage->serialize();
 
     }
 
@@ -874,80 +853,80 @@ class ProtoBufferEncoder
         {
             $pkColumn = new Column();
             $columnValue = new ColumnValue();
-            $pkColumn->set_name($request['inclusive_start_primary_key'][$i]['name']);
-            $columnValue->set_type($request['inclusive_start_primary_key'][$i]['value']['type']);
+            $pkColumn->name = $request['inclusive_start_primary_key'][$i]['name'];
+            $columnValue->type = $request['inclusive_start_primary_key'][$i]['value']['type'];
             switch ($request['inclusive_start_primary_key'][$i]['value']['type'])
             {
                 case ColumnType::INTEGER:
-                    $columnValue->set_v_int($request['inclusive_start_primary_key'][$i]['value']['v_int']);
+                    $columnValue->v_int = $request['inclusive_start_primary_key'][$i]['value']['v_int'];
                     break;  
                 case ColumnType::STRING:
-                    $columnValue->set_v_string($request['inclusive_start_primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['inclusive_start_primary_key'][$i]['value']['v_string'];
                     break;
                 case ColumnType::BOOLEAN:
-                    $columnValue->set_v_bool($request['inclusive_start_primary_key'][$i]['value']['v_bool']);
+                    $columnValue->v_bool = $request['inclusive_start_primary_key'][$i]['value']['v_bool'];
                     break;  
                 case ColumnType::DOUBLE:
-                    $columnValue->set_v_double($request['inclusive_start_primary_key'][$i]['value']['v_double']);
+                    $columnValue->v_double = $request['inclusive_start_primary_key'][$i]['value']['v_double'];
                     break;
                 case ColumnType::BINARY:
-                    $columnValue->set_v_binary($request['inclusive_start_primary_key'][$i]['value']['v_binary']);
+                    $columnValue->v_binary = $request['inclusive_start_primary_key'][$i]['value']['v_binary'];
                     break;
                 default:
                     if(!empty($request['inclusive_start_primary_key'][$i]['value']['v_string'])){
-                            $columnValue->set_v_string($request['inclusive_start_primary_key'][$i]['value']['v_string']);
+                            $columnValue->v_string = $request['inclusive_start_primary_key'][$i]['value']['v_string'];
                     }
             }
-            $pkColumn->set_value($columnValue);
-            $pbMessage->set_inclusive_start_primary_key($i, $pkColumn);
+            $pkColumn->value = $columnValue;
+            $pbMessage->inclusive_start_primary_key[$i] = $pkColumn;
         }
         for ($i=0; $i < count($request['exclusive_end_primary_key']); $i++)
         {
             $pkColumn = new Column();
             $columnValue = new ColumnValue();
-            $pkColumn->set_name($request['exclusive_end_primary_key'][$i]['name']);
-            $columnValue->set_type($request['exclusive_end_primary_key'][$i]['value']['type']);
+            $pkColumn->name = $request['exclusive_end_primary_key'][$i]['name'];
+            $columnValue->type = $request['exclusive_end_primary_key'][$i]['value']['type'];
             switch ($request['exclusive_end_primary_key'][$i]['value']['type'])
             {
                 case ColumnType::INTEGER:
-                    $columnValue->set_v_int($request['exclusive_end_primary_key'][$i]['value']['v_int']);
+                    $columnValue->v_int = $request['exclusive_end_primary_key'][$i]['value']['v_int'];
                     break;  
                 case ColumnType::STRING:
-                    $columnValue->set_v_string($request['exclusive_end_primary_key'][$i]['value']['v_string']);
+                    $columnValue->v_string = $request['exclusive_end_primary_key'][$i]['value']['v_string'];
                     break;
                 case ColumnType::BOOLEAN:
-                    $columnValue->set_v_bool($request['exclusive_end_primary_key'][$i]['value']['v_bool']);
+                    $columnValue->v_bool = $request['exclusive_end_primary_key'][$i]['value']['v_bool'];
                     break;  
                 case ColumnType::DOUBLE:
-                    $columnValue->set_v_double($request['exclusive_end_primary_key'][$i]['value']['v_double']);
+                    $columnValue->v_double = $request['exclusive_end_primary_key'][$i]['value']['v_double'];
                     break;
                 case ColumnType::BINARY:
-                    $columnValue->set_v_binary($request['exclusive_end_primary_key'][$i]['value']['v_binary']);
+                    $columnValue->v_binary = $request['exclusive_end_primary_key'][$i]['value']['v_binary'];
                     break;
                 default:
                     if(!empty($request['exclusive_end_primary_key'][$i]['value']['v_string'])){
-                        $columnValue->set_v_string($request['exclusive_end_primary_key'][$i]['value']['v_string']);
+                        $columnValue->v_string = $request['exclusive_end_primary_key'][$i]['value']['v_string'];
                     }
             }
-            $pkColumn->set_value($columnValue);
-            $pbMessage->set_exclusive_end_primary_key($i, $pkColumn);
+            $pkColumn->value = $columnValue;
+            $pbMessage->exclusive_end_primary_key[$i] = $pkColumn;
         }
          
         if (!empty($request['columns_to_get']))
         {
             for ($i = 0; $i < count($request['columns_to_get']); $i++)
             {
-                $pbMessage->set_columns_to_get($i, $request['columns_to_get'][$i]);
+                $pbMessage->columns_to_get[$i] = $request['columns_to_get'][$i];
             }
         }
          
-        $pbMessage->set_table_name($request['table_name']);
+        $pbMessage->table_name = $request['table_name'];
 
         if (isset($request['limit'])) {
-            $pbMessage->set_limit($request['limit']);
+            $pbMessage->limit = $request['limit'];
         }
-        $pbMessage->set_direction($request['direction']);
-        return $pbMessage->SerializeToString();
+        $pbMessage->direction = $request['direction'];
+        return $pbMessage->serialize();
 
     }
 
