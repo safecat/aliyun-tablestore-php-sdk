@@ -1,3 +1,7 @@
+// 参考 https://help.aliyun.com/document_detail/27345.html
+
+package com.aliyun.cloudservice.ots2;
+
 message Error {
     required string code = 1;
     optional string message = 2;
@@ -5,8 +9,8 @@ message Error {
 
 
 enum ColumnType {
-    INF_MIN = 0;
-    INF_MAX = 1;
+    INF_MIN = 0; // only for GetRange 
+    INF_MAX = 1; // only for GetRange
     INTEGER = 2;
     STRING = 3;
     BOOLEAN = 4;
@@ -73,6 +77,7 @@ message ConsumedCapacity {
     required CapacityUnit capacity_unit = 1;
 }
 
+/* CreateTable */
 message CreateTableRequest {
     required TableMeta table_meta = 1;
     required ReservedThroughput reserved_throughput = 2;
@@ -80,6 +85,8 @@ message CreateTableRequest {
 
 message CreateTableResponse {
 }
+
+/* UpdateTable */
 
 message UpdateTableRequest {
     required string table_name = 1;
@@ -90,6 +97,7 @@ message UpdateTableResponse {
     required ReservedThroughputDetails reserved_throughput_details = 1;
 }
 
+/* DescribeTable */
 message DescribeTableRequest {
     required string table_name = 1;
 }
@@ -99,14 +107,15 @@ message DescribeTableResponse {
     required ReservedThroughputDetails reserved_throughput_details = 2;
 }
 
+/* ListTable */
 message ListTableRequest {
-    required string ncvonline = 1;
 }
 
 message ListTableResponse {
     repeated string table_names = 1;
 }
 
+/* DeleteTable */
 message DeleteTableRequest {
     required string table_name = 1;
 }
@@ -114,6 +123,7 @@ message DeleteTableRequest {
 message DeleteTableResponse {
 }
 
+/* GetRow */
 message GetRowRequest {
     required string table_name = 1;
     repeated Column primary_key = 2;
@@ -125,6 +135,7 @@ message GetRowResponse {
     required Row row = 2;
 }
 
+/* UpdateRow */
 enum OperationType {
     PUT = 1;
     DELETE = 2;
@@ -147,6 +158,7 @@ message UpdateRowResponse {
     required ConsumedCapacity consumed = 1;
 }
 
+/* PutRow */
 message PutRowRequest {
     required string table_name = 1;
     required Condition condition = 2;
@@ -158,6 +170,7 @@ message PutRowResponse {
     required ConsumedCapacity consumed = 1;
 }
 
+/* DeleteRow */
 message DeleteRowRequest {
     required string table_name = 1;
     required Condition condition = 2;
@@ -168,6 +181,7 @@ message DeleteRowResponse {
     required ConsumedCapacity consumed = 1;
 }
 
+/* BatchGetRow */
 message RowInBatchGetRowRequest {
     repeated Column primary_key = 1;
 }
@@ -191,13 +205,14 @@ message RowInBatchGetRowResponse {
 
 message TableInBatchGetRowResponse {
     required string table_name = 1;
-    repeated RowInBatchGetRowResponse rows = 2;
+    repeated RowInBatchGetRowResponse rows = 2; // same indices w.r.t. request
 }
 
 message BatchGetRowResponse {
-    repeated TableInBatchGetRowResponse tables = 1;
+    repeated TableInBatchGetRowResponse tables = 1; // same indices w.r.t. request
 }
 
+/* BatchWriteRow */
 message PutRowInBatchWriteRowRequest {
     required Condition condition = 1;
     repeated Column primary_key = 2;
@@ -223,7 +238,7 @@ message TableInBatchWriteRowRequest {
 }
 
 message BatchWriteRowRequest {
-    repeated TableInBatchWriteRowRequest tables = 1;
+    repeated TableInBatchWriteRowRequest tables = 1; // same indices w.r.t. request
 }
 
 message RowInBatchWriteRowResponse {
@@ -234,15 +249,16 @@ message RowInBatchWriteRowResponse {
 
 message TableInBatchWriteRowResponse {
     required string table_name = 1;
-    repeated RowInBatchWriteRowResponse put_rows = 2;
-    repeated RowInBatchWriteRowResponse update_rows = 3;
-    repeated RowInBatchWriteRowResponse delete_rows = 4;
+    repeated RowInBatchWriteRowResponse put_rows = 2; // same indices w.r.t. request
+    repeated RowInBatchWriteRowResponse update_rows = 3; // same indices w.r.t. request
+    repeated RowInBatchWriteRowResponse delete_rows = 4; // same indices w.r.t. request
 }
 
 message BatchWriteRowResponse {
     repeated TableInBatchWriteRowResponse tables = 1;
 }
 
+/* GetRange */
 enum Direction {
     FORWARD = 0;
     BACKWARD = 1;
@@ -253,12 +269,12 @@ message GetRangeRequest {
     required Direction direction = 2;
     repeated string columns_to_get = 3;
     optional int32 limit = 4;
-    repeated Column inclusive_start_primary_key = 5;
-    repeated Column exclusive_end_primary_key = 6;
+    repeated Column inclusive_start_primary_key = 5; // required all PKs, possibly filled with INF_MIN/INF_MAX
+    repeated Column exclusive_end_primary_key = 6; // required all PKs, possibly filled with INF_MIN/INF_MAX
 }
 
 message GetRangeResponse {
     required ConsumedCapacity consumed = 1;
-    repeated Column next_start_primary_key = 2;
+    repeated Column next_start_primary_key = 2; // missing means hitting the end
     repeated Row rows = 3;
 }
