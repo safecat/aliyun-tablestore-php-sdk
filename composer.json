@@ -14,9 +14,6 @@
         "forum": "http://bbs.aliyun.com/thread/226.html"
     },
 
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-
     "config": {
         "preferred-install": "dist"
     },
@@ -24,7 +21,7 @@
     "require": {
         "php": ">=5.3",
         "guzzlehttp/guzzle": "3.8.1|~6.0.1|~6.1",
-        "DrSlump/Protobuf-PHP": "dev-master"
+        "centraldesktop/protobuf-php": "1.0.1"
     },
 
     "require-dev": {
@@ -50,11 +47,5 @@
             "src/OTS/Tests/TestConfig.php",
             "src/OTS/Tests/TestBase.php"
         ]
-    },
-    "repositories": [
-        {
-            "type":"vcs",
-            "url":"https://github.com/drslump/Protobuf-PHP.git"
-        }
-    ]
+    }
 }
