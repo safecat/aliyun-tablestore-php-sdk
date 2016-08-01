@@ -13,6 +13,9 @@
     "support": {
         "forum": "http://bbs.aliyun.com/thread/226.html"
     },
+
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     
     "require": {
         "php": ">=5.3",
