@@ -224,8 +224,8 @@ class ProtoBufferDecoder
         $pbMessage->parse($body);
  
         $tables = array();
-        if(!empty($pbMessage->$tables)){
-            foreach($pbMessage->$tables as $tableInBatchGetRow){
+        if(!empty($pbMessage->tables)){
+            foreach($pbMessage->tables as $tableInBatchGetRow){
                 $rowList = array();
                 foreach($tableInBatchGetRow as $rowInBatchGetRow){
                     $consumed = $rowInBatchGetRow->consumed;
@@ -321,8 +321,8 @@ class ProtoBufferDecoder
         $consumed = $pbMessage->consumed;
          
         $rowList = array();
-        if(!empty($pbMessage)){
-            foreach($pbMessage as $row){
+        if(!empty($pbMessage->rows)){
+            foreach($pbMessage->rows as $row){
                 array_push($rowList, $this->parseRow($row));
             }
         }
